@@ -11,7 +11,7 @@ redirect_from:
 
 Education
 ======
-* Ph.D in Computer Science, University of California, Irvine, 2027 (expected)
+* Ph.D in Computer Science, University of California, Irvine, 2022-2027 (expected)
   * Advisor: [Prof. Shuang Zhao](https://www.shuangz.com/)
 * B.Eng in Computer Science, Hong Kong University of Science and Technology, 2022
   * Advisor: [Prof. Pedro V. Sander](https://www.cse.ust.hk/~psander/)
