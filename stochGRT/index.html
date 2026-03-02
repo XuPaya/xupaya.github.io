@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>StochGRT — Stochastic Ray Tracing for 3DGS</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- ============================================================
+     NAVIGATION
+     ============================================================ -->
+<nav>
+  <div class="nav-inner">
+    <div class="brand">StochGRT</div>
+    <div class="links">
+      <a href="#abstract">Abstract</a>
+      <a href="#results">Results</a>
+      <a href="#method">Method</a>
+      <a href="#citation">Citation</a>
+    </div>
+  </div>
+</nav>
+
+<!-- ============================================================
+     HERO — Edit paper title, venue, subtitle, authors, links
+     ============================================================ -->
+<header class="hero">
+  <div class="venue">CVPR 2026</div>
+
+  <h1>Stochastic Ray Tracing for the Reconstruction of 3D Gaussian Splatting</h1>
+
+  <p class="subtitle">
+    A <strong>sorting-free</strong> formulation for ray-traced 3DGS optimization,
+    enabling efficient reconstruction and rendering of both
+    <strong>standard</strong> and <strong>relightable</strong> 3DGS scenes.
+  </p>
+
+  <!-- Authors — add/remove entries as needed -->
+  <div class="authors">
+    <a href="https://peiyuxu.com/">Peiyu Xu<span class="marks">1</span></a>
+    <a href="https://www.sunxin.name/">Xin Sun<span class="marks">2</span></a>
+    <a href="https://krishnamullia.com/">Krishna Mullia<span class="marks">2</span></a>
+    <a href="https://raymondyfei.github.io/">Raymond Fei<span class="marks">2</span></a>
+    <a href="https://iliyan.com/">Iliyan Georgiev<span class="marks">2</span></a>
+    <a href="https://shuangz.com/">Shuang Zhao<span class="marks">1</span></a>
+  </div>
+
+  <p class="affiliations">
+     <sup>1</sup>University of Illinois at Urbana-Champaign &nbsp;|&nbsp; <sup>2</sup>Adobe Research
+  </p>
+
+  <!-- Action buttons — update href values when ready -->
+  <div class="actions">
+    <a href="#" class="btn btn-primary">
+      <svg viewBox="0 0 16 16"><path d="M4 1h8a1 1 0 011 1v12a1 1 0 01-1 1H4a1 1 0 01-1-1V2a1 1 0 011-1zm1 2v2h6V3H5zm0 4v1h6V7H5zm0 3v1h4v-1H5z"/></svg>
+      Paper (Coming Soon)
+    </a>
+    <a href="#" class="btn btn-outline">
+      <svg viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8a8 8 0 005.47 7.59c.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82A7.65 7.65 0 018 4.07c.68.003 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+      Code (Coming Soon)
+    </a>
+  </div>
+</header>
+
+<!-- ============================================================
+     TEASER FIGURE
+     ============================================================ -->
+<section>
+  <img class="teaser-img" src="figures/teaser.png" alt="Teaser figure">
+</section>
+
+<!-- ============================================================
+     ABSTRACT
+     ============================================================ -->
+<section id="abstract">
+  <h2>Abstract</h2>
+  <div>
+    <p>
+      Ray-tracing-based 3D Gaussian splatting (3DGS) enjoys the generality of
+      supporting non-pinhole camera models and relightable formulations. However,
+      they are usually lacking in performance, partially due to the need for
+      depth-based sorting of all intersecting Gaussians along the traced rays.
+    </p>
+    <br>
+    <p>
+      In this paper, we introduce a sorting-free differentiable stochastic
+      formulation for ray-traced 3DGS, enabling efficient reconstruction and
+      rendering of both standard and relightable 3DGS scenes. For standard 3DGS,
+      our method offers performance comparable to rasterization-based 3DGS and
+      outperforms sorting-based ray tracing. For relightable 3DGS, our technique
+      provides higher-quality reconstructions and renderings thanks to the
+      accurate shadow and shading computation provided by per-Gaussian shading
+      via fully ray-traced shadow rays.
+    </p>
+  </div>
+</section>
+
+<!-- ============================================================
+     RESULTS
+     ============================================================ -->
+<section id="results">
+  <h2>Results</h2>
+
+  <!-- ── Equal-Time Comparison ──────────────────────────────── -->
+  <h3 id="eqtime">Ray-Traced Standard Gaussian Splatting</h3>
+  <p>
+    As a ray-tracing-based algorithm, our method brings a <strong>considerable speed-up of ~40-50%</strong> to 3DGRT, and runs in similar speed to
+    the rasterization-based 3DGS. Meanwhile, our algorithm achieves comparable reconstruction quality on all benchmarks. 
+  </p>
+  <br>
+  <p class="section-desc">
+    Drag the timeline or press play to compare optimization progress across
+    methods at equal wall-clock time. Drag the vertical handles to adjust the
+    comparison split.
+  </p>
+
+  <div class="eqt-canvas" id="eqtCanvas">
+    <img class="eqt-img" id="eqtImg0" alt="" draggable="false">
+    <img class="eqt-img" id="eqtImg1" alt="" draggable="false">
+
+    <div class="eqt-noframe" id="eqtNF0"><span>Waiting for first eval&hellip;</span></div>
+    <div class="eqt-noframe" id="eqtNF1"><span>Waiting for first eval&hellip;</span></div>
+
+    <div class="eqt-badge" id="eqtBadge0"></div>
+    <div class="eqt-badge" id="eqtBadge1"></div>
+
+    <div class="eqt-handle" id="eqtH0"><div class="eqt-handle-grip"></div></div>
+  </div>
+
+  <!-- Controls -->
+  <div class="controls-row">
+    <button class="play-btn" id="eqtPlay" aria-label="Play / Pause">&#9654;</button>
+    <input type="range" class="range-slider" id="eqtSlider" min="0" max="3500" step="0.5" value="200">
+    <span class="time-label" id="eqtTime">200.0s</span>
+  </div>
+
+  <div class="speed-group" style="--label:'Speed:'">
+    <span style="font-size:.8rem;color:var(--c-text-secondary);margin-right:.25rem">Speed:</span>
+    <button class="speed-btn" data-eqt-speed="50">50&times;</button>
+    <button class="speed-btn" data-eqt-speed="200">200&times;</button>
+    <button class="speed-btn active" data-eqt-speed="1000">1000&times;</button>
+  </div>
+
+  <div class="eqt-bottom-row">
+    <div class="eqt-methods" id="eqtMethods"></div>
+    <div class="eqt-chart-wrap">
+      <svg class="eqt-chart" id="eqtChart" viewBox="0 0 400 280" preserveAspectRatio="xMidYMid meet"></svg>
+    </div>
+  </div>
+
+  <!-- ── Relighting Results ─────────────────────────────────── -->
+  <h3 style="margin-top:2.5rem">Ray-Traced Relightable Gaussian Splatting</h3>
+  <p>
+    Furthermore, our method can be applied to relightable Gaussian Splatting with a simple NEE-style extension. Our algorithm 
+    can be used to efficiently support ray-traced shadows and various types of emitters (non-distant/area/image-based/...), 
+    and achieve state-of-the-art results.
+  </p>
+  <br>
+  <p class="section-desc">
+    Animated relighting under rotating environment lighting. Each cell shows the
+    ground-truth reference (left) alongside the relighted prediction (right). Drag the
+    slider to control the light direction.
+  </p>
+
+  <div class="rl-grid" id="rlGrid"></div>
+
+  <!-- Controls -->
+  <div class="controls-row">
+    <button class="play-btn" id="rlPlay" aria-label="Play / Pause">&#9654;</button>
+    <input type="range" class="range-slider" id="rlSlider" min="0" max="59" step="1" value="0">
+    <span class="time-label" id="rlFrame" style="min-width:55px">0 / 59</span>
+  </div>
+
+  <div class="speed-group">
+    <span style="font-size:.8rem;color:var(--c-text-secondary);margin-right:.25rem">FPS:</span>
+    <button class="speed-btn" data-rl-fps="5">5</button>
+    <button class="speed-btn" data-rl-fps="10">10</button>
+    <button class="speed-btn active" data-rl-fps="20">20</button>
+  </div>
+</section>
+
+<!-- ============================================================
+     METHOD
+     ============================================================ -->
+<section id="method">
+  <h2>Method</h2>
+  <div class="method-row">
+    <img class="method-img" src="figures/backward_pass.jpg" alt="Method overview">
+    <div class="method-text">
+      <p>
+        The core of our method is a <strong>two-sample Monte Carlo estimator</strong> that unbiasedly estimates the radiance and the 
+        gradient for each gaussian. Our method provides two important benefits: <strong>1.</strong> The Gaussians along the traced rays can be processed 
+        in arbitrary order, removing the need for sorting all Gaussians along each traced rays, and <strong>2.</strong> only a small subset of gaussians 
+        will contribute to the pixel color or receive gradient, reducing the cost of Gaussian color evaluation. We further show that 
+        our algorithm provides proper importance sampling that is sufficient to avoid loss of quality.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     CITATION
+     ============================================================ -->
+<section id="citation">
+  <h2>Citation</h2>
+  <p class="section-desc">If you find this work useful, please cite our paper:</p>
+  <div class="bibtex-block">
+    <button class="copy-btn" id="copyBibtexBtn">Copy</button>
+<pre id="bibtexContent">
+  
+</pre>
+  </div>
+</section>
+
+<!-- ============================================================
+     RELATED WORK — Add / remove entries as needed
+     ============================================================ -->
+<section>
+  <h2>Related Work</h2>
+  <ul class="related-list">
+    <li>
+      <a href="https://gaussiantracer.github.io/res/3dgrt_compressed.pdf">3D Gaussian Ray Tracing: Fast Tracing of Particle Scenes</a>
+      <div class="meta">N. Moenne-Loccoz
+        A. Mirzaei
+        O. Perel
+        R. De Lutio
+        J. Martinez Esturo
+        G. State
+        S. Fidler
+        N. Sharp
+        Z. Gojcic &mdash; SIGGRAPH Asia 2024</div>
+    </li>
+    <li>
+      <a href="https://arxiv.org/abs/2503.24366">StochasticSplats: Stochastic Rasterization for Sorting-Free 3D Gaussian Splatting</a>
+      <div class="meta">S. Kheradmand, D. Vicini, G. Kopanas, D. Lagun, K. Yi, M. Matthews, A. Tagliasacchi &mdash; ICCV 2025</div>
+    </li>
+    <li>
+      <a href="https://iliyan.com/publications/GaussianRayTracing/GaussianRayTracing_EGSR2025.pdf">Stochastic ray tracing of transparent 3D Gaussians</a>
+      <div class="meta">X. Sun, I. Georgiev, Y. Fei, M. Hašan &mdash; EGSR 2025</div>
+    </li>
+  </ul>
+</section>
+
+<!-- ============================================================
+     ACKNOWLEDGEMENTS
+     ============================================================ -->
+<section>
+  <h2>Acknowledgements</h2>
+  <p class="section-desc">
+    
+  </p>
+</section>
+
+<!-- ============================================================
+     FOOTER
+     ============================================================ -->
+<footer>
+  <p>
+    StochGRT &copy; 2026 &nbsp;&middot;&nbsp;
+    <a href="#">University of Illinois at Urbana-Champaign</a> &nbsp;&middot;&nbsp;
+    <a href="#">Adobe Research</a>
+  </p>
+</footer>
+
+<!-- ============================================================
+     DATA & SCRIPTS
+     ============================================================
+
+     Edit the arrays below to update method data or scene lists.
+     Each script file reads its config from `window.*` globals.
+     ============================================================ -->
+<script>
+/* ── Copy BibTeX ── */
+document.getElementById("copyBibtexBtn").addEventListener("click", function () {
+  var text = document.getElementById("bibtexContent").textContent;
+  navigator.clipboard.writeText(text).then(function () {
+    var btn = document.getElementById("copyBibtexBtn");
+    btn.textContent = "Copied!";
+    setTimeout(function () { btn.textContent = "Copy"; }, 2000);
+  });
+});
+
+/* ──────────────────────────────────────────────────────────────
+   Equal-Time Comparison — Method Data
+   Edit key, label, color, times[], and psnrs[] per method.
+   ────────────────────────────────────────────────────────────── */
+window.EQTIME_METHODS = [
+  {
+    key:   "base",
+    label: "3DGRT",
+    color: "#ef4444",
+    times: [
+      0.0, 427.503, 689.709, 857.926, 977.332, 1077.997, 1167.190, 1251.346,
+      1325.273, 1397.030, 1468.840, 1541.269, 1614.239, 1690.119, 1760.993,
+      1833.018, 1905.729, 1979.468, 2050.608, 2129.986, 2207.776, 2283.181,
+      2360.261, 2436.830, 2513.478, 2595.426, 2675.413, 2750.469, 2827.900,
+      2904.464, 2980.424, 3056.639, 3130.242, 3204.220, 3276.282, 3347.966,
+      3419.089, 3488.697, 3557.701, 3626.119, 3693.960, 3761.102, 3828.737,
+      3895.265, 3960.223, 4025.521, 4090.331, 4155.198, 4219.259, 4282.745,
+      4345.754, 4408.882, 4471.555, 4534.186, 4595.892, 4658.230, 4719.826,
+      4783.581, 4844.213, 4904.856, 4965.431
+    ],
+    psnrs: [
+      21.353, 24.479, 25.937, 26.956, 27.594, 29.008, 28.376, 29.406,
+      29.476, 30.848, 31.117, 31.719, 31.391, 31.749, 31.712, 31.678,
+      32.572, 32.526, 32.076, 32.496, 32.926, 33.455, 33.517, 34.075,
+      32.816, 33.847, 34.151, 33.493, 33.433, 34.142, 33.826, 34.255,
+      33.958, 33.956, 33.434, 33.998, 33.643, 34.165, 34.308, 33.917,
+      34.880, 33.846, 35.236, 33.911, 33.921, 34.435, 34.298, 34.436,
+      35.062, 34.978, 34.167, 34.323, 34.627, 34.376, 34.273, 34.556,
+      34.737, 34.689, 34.608, 34.990
+    ]
+  },
+  {
+    key:   "quasistoch",
+    label: "Ours",
+    color: "#22c55e",
+    times: [
+      0.0, 195.237, 340.655, 456.272, 549.518, 630.518, 698.456, 733.838,
+      763.744, 792.653, 821.521, 850.522, 879.770, 908.739, 936.717, 965.749,
+      994.814, 1025.506, 1056.480, 1086.133, 1115.886, 1145.978, 1177.531,
+      1209.965, 1244.266, 1277.476, 1310.631, 1342.556, 1376.043, 1410.522,
+      1445.761, 1481.033, 1515.384, 1549.869, 1583.591, 1617.330, 1650.980,
+      1683.886, 1716.715, 1749.115, 1781.554, 1813.764, 1846.127, 1878.017,
+      1909.448, 1941.125, 1972.703, 2004.455, 2035.823, 2066.873, 2097.936,
+      2128.991, 2159.906, 2191.089, 2221.666, 2252.438, 2282.857, 2314.102,
+      2344.315, 2374.510, 2404.398
+    ],
+    psnrs: [
+      21.353, 24.479, 25.937, 26.956, 27.594, 29.008, 28.376, 29.406,
+      29.476, 30.848, 31.117, 31.719, 31.391, 31.749, 31.712, 31.678,
+      32.572, 32.526, 32.076, 32.496, 32.926, 33.455, 33.517, 34.075,
+      32.816, 33.847, 34.151, 33.493, 33.433, 34.142, 33.826, 34.255,
+      33.958, 33.956, 33.434, 33.998, 33.643, 34.165, 34.308, 33.917,
+      34.880, 33.846, 35.236, 33.911, 33.921, 34.435, 34.298, 34.436,
+      35.062, 34.978, 34.167, 34.323, 34.627, 34.376, 34.273, 34.556,
+      34.737, 34.689, 34.608, 34.990
+    ]
+  }
+];
+
+/* ──────────────────────────────────────────────────────────────
+   Relighting — Scene & View Data
+   Edit key, label, and views (dir + gt filename) per scene.
+   ────────────────────────────────────────────────────────────── */
+window.RL_SCENES = [
+  {
+    key:   "basket_relight",
+    label: "Basket",
+    views: [
+      { dir: "view1", gt: "00014.png" },
+      { dir: "view2", gt: "00001.png" }
+    ]
+  },
+  {
+    key:   "cat_relight",
+    label: "Cat",
+    views: [
+      { dir: "view1", gt: "00000.png" },
+      { dir: "view2", gt: "00006.png" }
+    ]
+  },
+  {
+    key:   "lego_relight",
+    label: "Lego",
+    views: [
+      { dir: "view1", gt: "00000.png" },
+      { dir: "view2", gt: "00028.png" }
+    ]
+  }
+];
+</script>
+
+<!-- Feature scripts (loaded after data is set on window) -->
+<script src="eqtime.js"></script>
+<script src="relight.js"></script>
+
+</body>
+</html>
